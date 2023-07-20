@@ -6,39 +6,38 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func main() {
 	dotfiles := os.Getenv("dotfilesdir")
+	dotfiles = strings.ReplaceAll(dotfiles, "/", "\\\\")
 	fmt.Printf("dotfiles: %s\n", dotfiles)
 	if len(dotfiles) == 0 {
 		df, err := os.UserHomeDir()
 		if err != nil {
-			dotfiles = "~\\.files"
+			dotfiles = "~\\\\.files"
 		} else {
-			dotfiles = df + "\\.files"
+			dotfiles = df + "\\\\.files"
 		}
 	}
 
-	command := dotfiles + "\\bin\\go-install"
-	bash, err := exec.LookPath("bash")
-	if err != nil {
-		fmt.Println(err)
-	}
+	command := dotfiles + "\\\\bin\\\\go-install"
+	bash := "C:\\Program Files\\Git\\usr\\bin\\bash.exe"
 
 	fmt.Printf("exec: %s %s\n", bash, command)
 
-	cmd := exec.Command(bash, command)
+	cmd := exec.Command(bash, "-c", command)
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
-	err = cmd.Start()
+	err := cmd.Start()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(254)
 	}
 
-	go print(stdout)
-	go print(stderr)
+	go print(stdout, false)
+	go print(stderr, true)
 
 	err = cmd.Wait()
 
@@ -48,8 +47,12 @@ func main() {
 	}
 }
 
-func print(stdout io.ReadCloser) {
+func print(stdout io.ReadCloser, err bool) {
 	r := bufio.NewReader(stdout)
 	line, _, _ := r.ReadLine()
-	fmt.Printf("%s\n", line)
+	fd := os.Stdout
+	if err {
+		fd = os.Stderr
+	}
+	fmt.Fprintf(fd, "%s\n", line)
 }
