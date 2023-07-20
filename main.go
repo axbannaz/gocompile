@@ -8,22 +8,35 @@ import (
 
 func main() {
 	dotfiles := os.Getenv("dotfilesdir")
+	fmt.Printf("dotfiles: %s\n", dotfiles)
 	if len(dotfiles) == 0 {
 		df, err := os.UserHomeDir()
 		if err != nil {
-			dotfiles = "~/.files"
+			dotfiles = "~\\.files"
 		} else {
-			dotfiles = df + "/.files"
+			dotfiles = df + "\\.files"
 		}
 	}
 
-	command := dotfiles + "/bin/go-install"
-	fmt.Printf("exec: %v\n", command)
-	cmd := exec.Command("bash", "-l", command)
-	err := cmd.Wait()
+	command := dotfiles + "\\bin\\go-install"
+	bash, err := exec.LookPath("bash")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("exec: %s %s\n", bash, command)
+
+	cmd := exec.Command(bash, command)
+	err = cmd.Start()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(254)
+	}
+
+	err = cmd.Wait()
 
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		os.Exit(255)
 	}
 }
