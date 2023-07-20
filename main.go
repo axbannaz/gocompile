@@ -11,18 +11,18 @@ import (
 
 func main() {
 	dotfiles := os.Getenv("dotfilesdir")
-	dotfiles = strings.ReplaceAll(dotfiles, "/", "\\\\")
+	dotfiles = strings.ReplaceAll(dotfiles, "\\", "/")
 	fmt.Printf("dotfiles: %s\n", dotfiles)
 	if len(dotfiles) == 0 {
 		df, err := os.UserHomeDir()
 		if err != nil {
-			dotfiles = "~\\\\.files"
+			dotfiles = "~/.files"
 		} else {
-			dotfiles = df + "\\\\.files"
+			dotfiles = df + "/.files"
 		}
 	}
 
-	command := dotfiles + "\\\\bin\\\\go-install"
+	command := fmt.Sprintf("'%s/bin/go-install'", dotfiles)
 	bash := "C:\\Program Files\\Git\\usr\\bin\\bash.exe"
 
 	fmt.Printf("exec: %s %s\n", bash, command)
