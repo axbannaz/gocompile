@@ -19,7 +19,7 @@ func main() {
 
 	command := dotfiles + "/bin/go-install"
 	fmt.Printf("exec: %v\n", command)
-	cmd := exec.Command(command)
+	cmd := exec.Command("bash", "-l", command)
 	err := cmd.Wait()
 
 	if err != nil {
