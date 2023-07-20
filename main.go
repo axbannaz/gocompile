@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -22,12 +23,17 @@ func main() {
 		}
 	}
 
-	command := fmt.Sprintf("'%s/bin/go-install'", dotfiles)
-	bash := "C:\\Program Files\\Git\\usr\\bin\\bash.exe"
+	command := fmt.Sprintf("%s/bin/go-install", dotfiles)
+	var Args []string
+	if runtime.GOOS == "windows" {
+		Args = append(Args, "C:\\Program Files\\Git\\usr\\bin\\bash.exe")
+	}
 
-	fmt.Printf("exec: %s %s\n", bash, command)
+	Args = append(Args, command)
+	Args = append(Args, os.Args[1:]...)
 
-	cmd := exec.Command(bash, "-c", command)
+	fmt.Printf("exec: %v\n", Args)
+	cmd := exec.Command(Args[0], Args[1:]...)
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 	err := cmd.Start()
