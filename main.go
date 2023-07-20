@@ -49,10 +49,15 @@ func main() {
 
 func print(stdout io.ReadCloser, err bool) {
 	r := bufio.NewReader(stdout)
-	line, _, _ := r.ReadLine()
-	fd := os.Stdout
-	if err {
-		fd = os.Stderr
+	for {
+		line, _, errr := r.ReadLine()
+		if errr != nil {
+			break
+		}
+		fd := os.Stdout
+		if err {
+			fd = os.Stderr
+		}
+		fmt.Fprintf(fd, "%s\n", line)
 	}
-	fmt.Fprintf(fd, "%s\n", line)
 }
