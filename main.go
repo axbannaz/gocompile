@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 )
@@ -27,11 +29,16 @@ func main() {
 	fmt.Printf("exec: %s %s\n", bash, command)
 
 	cmd := exec.Command(bash, command)
+	stdout, _ := cmd.StdoutPipe()
+	stderr, _ := cmd.StderrPipe()
 	err = cmd.Start()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(254)
 	}
+
+	go print(stdout)
+	go print(stderr)
 
 	err = cmd.Wait()
 
@@ -39,4 +46,10 @@ func main() {
 		fmt.Println(err)
 		os.Exit(255)
 	}
+}
+
+func print(stdout io.ReadCloser) {
+	r := bufio.NewReader(stdout)
+	line, _, _ := r.ReadLine()
+	fmt.Printf("%s\n", line)
 }
