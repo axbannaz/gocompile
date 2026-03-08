@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dotfiles := os.Getenv("dotfilesdir")
+	dotfiles := os.Getenv("dotFilesDir")
 	dotfiles = strings.ReplaceAll(dotfiles, "\\", "/")
 	fmt.Printf("dotfiles: %s\n", dotfiles)
 	if len(dotfiles) == 0 {
@@ -67,3 +67,4 @@ func print(stdout io.ReadCloser, err bool) {
 		fmt.Fprintf(fd, "%s\n", line)
 	}
 }
+
