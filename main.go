@@ -15,12 +15,14 @@ func main() {
 	dotfiles = strings.ReplaceAll(dotfiles, "\\", "/")
 	fmt.Printf("dotfiles: %s\n", dotfiles)
 	if len(dotfiles) == 0 {
+		fmt.Print("dotFilesDir env is not set, guessing ")
 		df, err := os.UserHomeDir()
 		if err != nil {
 			dotfiles = "~/.files"
 		} else {
 			dotfiles = df + "/.files"
 		}
+		fmt.Printf("dotfiles as: %s\n", dotfiles)
 	}
 
 	command := fmt.Sprintf("%s/bin/go-install", dotfiles)
@@ -53,18 +55,17 @@ func main() {
 	}
 }
 
-func print(stdout io.ReadCloser, err bool) {
+func print(stdout io.ReadCloser, is_stderr bool) {
 	r := bufio.NewReader(stdout)
 	for {
-		line, _, errr := r.ReadLine()
-		if errr != nil {
+		line, _, err := r.ReadLine()
+		if err != nil {
 			break
 		}
 		fd := os.Stdout
-		if err {
+		if is_stderr {
 			fd = os.Stderr
 		}
 		fmt.Fprintf(fd, "%s\n", line)
 	}
 }
-
