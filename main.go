@@ -29,6 +29,8 @@ func main() {
 	var Args []string
 	if runtime.GOOS == "windows" {
 		Args = append(Args, "C:\\Program Files\\Git\\usr\\bin\\bash.exe")
+		Args = append(Args, "--noprofile")
+		Args = append(Args, "--norc")
 	}
 
 	Args = append(Args, command)
