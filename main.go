@@ -28,7 +28,7 @@ func main() {
 	command := fmt.Sprintf("%s/bin/go-install", dotfiles)
 	var Args []string
 	if runtime.GOOS == "windows" {
-		Args = append(Args, "C:\\Program Files\\Git\\usr\\bin\\bash.exe")
+		Args = append(Args, "C:\\Program Files\\Git\\bin\\bash.exe")
 		Args = append(Args, "--noprofile")
 		Args = append(Args, "--norc")
 	}
